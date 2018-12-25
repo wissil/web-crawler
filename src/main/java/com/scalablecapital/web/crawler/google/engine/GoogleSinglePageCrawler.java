@@ -1,9 +1,9 @@
-package com.scalablecapital.web.crawler.engine;
+package com.scalablecapital.web.crawler.google.engine;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.scalablecapital.web.crawler.model.GoogleSearchResult;
+import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
 
 /**
  * An interface that represents a crawler over a single Google page.

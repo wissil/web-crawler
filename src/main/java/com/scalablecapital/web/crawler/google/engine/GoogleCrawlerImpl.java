@@ -1,4 +1,4 @@
-package com.scalablecapital.web.crawler.engine;
+package com.scalablecapital.web.crawler.google.engine;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.scalablecapital.web.crawler.model.GoogleSearchResult;
+import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
 
 public class GoogleCrawlerImpl implements GoogleCrawler {
 

@@ -1,8 +1,9 @@
-package com.scalablecapital.web.crawler.engine;
+package com.scalablecapital.web.crawler.google.engine;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
@@ -10,22 +11,22 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.scalablecapital.web.crawler.model.GoogleSearchResult;
+import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
 
 import static com.scalablecapital.web.query.WebQueryUtils.transformToQuery;
 
 public class GoogleSinglePageCrawlerImpl implements GoogleSinglePageCrawler {
 	
-	/** Google Chrome user agent. */
-	private static final String USER_AGENT = 
-			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-					+ "AppleWebKit/537.36 (KHTML, like Gecko) "
-					+ "Chrome/70.0.3538.77 Safari/537.36";
-
 	private static final String GOOGLE_SEARCH_URL = 
 			"https://www.google.com/search"	// base URL
 			+ "?q=%s"						// search term			
 			+ "&start=%s";					// page number
+	
+	private final String userAgent;
+	
+	public GoogleSinglePageCrawlerImpl(String userAgent) {
+		this.userAgent = Objects.requireNonNull(userAgent);
+	}
 	
 	private static final String SEARCH_ELEMENT_ID = "search";
 	
@@ -39,7 +40,7 @@ public class GoogleSinglePageCrawlerImpl implements GoogleSinglePageCrawler {
 				String.format(GOOGLE_SEARCH_URL, query, String.valueOf(pageNumber * RESULTS_PER_PAGE));
 		
 		final Document document = 
-				Jsoup.connect(searchURL).userAgent(USER_AGENT).get();
+				Jsoup.connect(searchURL).userAgent(userAgent).get();
 		
 		return isEmptyResult(document) ?
 						Collections.emptyList() :

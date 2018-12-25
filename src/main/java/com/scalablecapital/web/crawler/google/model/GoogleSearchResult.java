@@ -1,4 +1,4 @@
-package com.scalablecapital.web.crawler.model;
+package com.scalablecapital.web.crawler.google.model;
 
 import java.util.Objects;
 

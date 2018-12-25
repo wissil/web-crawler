@@ -1,10 +1,10 @@
-package com.scalablecapital.web.crawler.engine;
+package com.scalablecapital.web.crawler.google.engine;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import com.scalablecapital.web.crawler.model.GoogleSearchResult;
+import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
 
 /**
  * Crawler over Google pages.

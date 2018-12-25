@@ -1,4 +1,4 @@
-package com.scalablecapital.web.crawler.engine;
+package com.scalablecapital.web.crawler.google.engine;
 
 import static org.junit.Assert.assertFalse;
 
@@ -10,7 +10,8 @@ import org.junit.Test;
 
 import com.google.inject.Inject;
 import com.scalablecapital.web.crawler.config.WebCrawlerTestBase;
-import com.scalablecapital.web.crawler.model.GoogleSearchResult;
+import com.scalablecapital.web.crawler.google.engine.GoogleCrawler;
+import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
 
 public class GoogleCrawlerTest extends WebCrawlerTestBase {
 
