@@ -3,8 +3,7 @@ package com.scalablecapital.web.crawler.google.engine;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Crawler over Google pages.
@@ -16,11 +15,11 @@ public interface GoogleCrawler {
 
 	/**
 	 * Crawls over all <b>Google</b> pages for a given <code>searchTerm</code>,
-	 * and retrieves the {@link GoogleSearchResult} objects from it.
+	 * and retrieves the main URLs from it.
 	 * 
 	 * @param searchTerm Term that <b>Google</b> was queried for.
 	 * 
-	 * @return List of {@link GoogleSearchResult} from the <b>Google</b> page 
+	 * @return List of main URLs from the <b>Google</b> page 
 	 * for the <code>searchTerm</code>.
 	 * If no results were found, an empty list is returned.
 	 * 
@@ -28,5 +27,5 @@ public interface GoogleCrawler {
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	List<GoogleSearchResult> crawl(String searchTerm) throws IOException, InterruptedException, ExecutionException;
+	List<String> crawl(String searchTerm, long timeout, TimeUnit unit) throws IOException, InterruptedException, ExecutionException;
 }

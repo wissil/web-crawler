@@ -1,4 +1,4 @@
-package com.scalablecapital.web.query;
+package com.scalablecapital.web.util;
 
 public class WebQueryUtils {
 	

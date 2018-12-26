@@ -44,9 +44,10 @@ public class WebCrawlerModule extends AbstractModule {
 		return new GoogleCrawlerImpl(executor, pageCrawler);
 	}
 	
+	@Inject
 	@Provides
 	@Singleton
-	JSLibraryFinder jsLibFinder() {
-		return new JSLibraryFinderImpl(USER_AGENT);
+	JSLibraryFinder jsLibFinder(ExecutorService executor) {
+		return new JSLibraryFinderImpl(USER_AGENT, executor);
 	}
 }

@@ -1,9 +1,11 @@
 package com.scalablecapital.web.crawler.js.engine;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import com.scalablecapital.web.crawler.js.model.JsLib;
 
 public interface JSLibraryFinder {
 
@@ -16,5 +18,17 @@ public interface JSLibraryFinder {
 	 * <code>url</code>.
 	 * @throws IOException 
 	 */
-	Set<JsLib> findLibraries(String url) throws IOException;
+	Set<String> findLibraries(String url) throws IOException;
+	
+	/**
+	 * Finds all the JavaScript libraries used on websites
+	 * under the given <code>urls</code>.
+	 * 
+	 * @param urls URLs of the websites of interest.
+	 * @return Map of JavaScript libraries used on websites under the given
+	 * <code>urls</code> mapped to the number of their occurrences.
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 */
+	Map<String, Integer> findLibraries(List<String> urls, long timeout, TimeUnit unit) throws IOException, InterruptedException;
 }

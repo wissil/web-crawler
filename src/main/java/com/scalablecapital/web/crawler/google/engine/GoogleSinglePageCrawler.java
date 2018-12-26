@@ -3,8 +3,6 @@ package com.scalablecapital.web.crawler.google.engine;
 import java.io.IOException;
 import java.util.List;
 
-import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
-
 /**
  * An interface that represents a crawler over a single Google page.
  *
@@ -14,7 +12,7 @@ public interface GoogleSinglePageCrawler {
 
 	/**
 	 * Crawls over a single <b>Google</b> page at number <code>pageNumber</code>,
-	 * and extracts the {@link GoogleSearchResult} objects from it.
+	 * and extracts the main URLs from it.
 	 * 
 	 * @param searchTerm Term that <b>Google</b> was queried for.
 	 * @param pageNumber <b>Google</b> page number.
@@ -25,6 +23,6 @@ public interface GoogleSinglePageCrawler {
 	 * 
 	 * @throws IOException 
 	 */
-	List<GoogleSearchResult> crawl(String searchTerm, int pageNumber) throws IOException;
+	List<String> crawl(String searchTerm, int pageNumber) throws IOException;
 	
 }

@@ -6,13 +6,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
 
 public class GoogleCrawlerImpl implements GoogleCrawler {
 
@@ -29,8 +30,8 @@ public class GoogleCrawlerImpl implements GoogleCrawler {
 	}
 
 	@Override
-	public List<GoogleSearchResult> crawl(String searchTerm) throws IOException, InterruptedException, ExecutionException {
-		final List<GoogleSearchResult> results = Collections.synchronizedList(new ArrayList<>());
+	public List<String> crawl(String searchTerm, long timeout, TimeUnit unit) throws IOException, InterruptedException {
+		final List<String> results = Collections.synchronizedList(new ArrayList<>());
 
 		boolean shouldContinue = true;
 
@@ -40,20 +41,30 @@ public class GoogleCrawlerImpl implements GoogleCrawler {
 			final int pageOffset = offset;
 
 			// run the batch of tasks concurrently
-			final List<Future<List<GoogleSearchResult>>> pageCrawlFutures = 
-					executor.invokeAll(
-							IntStream
-								.range(0, N_PAGES_CONCURRENT)
-								.map(pageNumber -> pageNumber + pageOffset)
-								.mapToObj(pageNumber -> crawlPageCallable(searchTerm, pageNumber))
-								.collect(Collectors.toList()));
+			final List<Future<List<String>>> pageCrawlFutures = executor.invokeAll(
+						IntStream
+							.range(0, N_PAGES_CONCURRENT)
+							.map(pageNumber -> pageNumber + pageOffset)
+							.mapToObj(pageNumber -> crawlPageCallable(searchTerm, pageNumber))
+							.collect(Collectors.toList()),
+				timeout, unit);
+			
 
-			for (Future<List<GoogleSearchResult>> f : pageCrawlFutures) {
+			for (Future<List<String>> f : pageCrawlFutures) {
 				// if any of the pages is empty -- break while
-				final List<GoogleSearchResult> pageResults = f.get();
+				List<String> pageResults = null;
+				try {
+					pageResults = f.get();
+				} catch (ExecutionException e) {
+					// page failed, ignore
+					// TODO: log error
+				} catch (CancellationException e) {
+					// timeout, return what have so far
+					return Collections.unmodifiableList(results);
+				}
 				
-				System.out.println(pageResults.size());
-
+				if (pageResults == null) continue;
+				
 				if (pageResults.isEmpty()) {
 					// end of results has been reached
 					shouldContinue = false;
@@ -70,11 +81,11 @@ public class GoogleCrawlerImpl implements GoogleCrawler {
 		return Collections.unmodifiableList(results);
 	}
 
-	private Callable<List<GoogleSearchResult>> crawlPageCallable(String searchTerm, int pageNumber) {
-		return new Callable<List<GoogleSearchResult>>() {
+	private Callable<List<String>> crawlPageCallable(String searchTerm, int pageNumber) {
+		return new Callable<List<String>>() {
 
 			@Override 
-			public List<GoogleSearchResult> call() throws IOException {
+			public List<String> call() throws IOException {
 				// unhandled exception if the page wasn't found
 				// let it crash, no way to recover
 				return pageCrawler.crawl(searchTerm, pageNumber);

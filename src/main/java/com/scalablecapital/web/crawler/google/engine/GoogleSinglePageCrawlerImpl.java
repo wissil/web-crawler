@@ -1,5 +1,7 @@
 package com.scalablecapital.web.crawler.google.engine;
 
+import static com.scalablecapital.web.util.WebQueryUtils.transformToQuery;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -10,10 +12,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import com.scalablecapital.web.crawler.google.model.GoogleSearchResult;
-
-import static com.scalablecapital.web.query.WebQueryUtils.transformToQuery;
 
 public class GoogleSinglePageCrawlerImpl implements GoogleSinglePageCrawler {
 	
@@ -33,7 +31,7 @@ public class GoogleSinglePageCrawlerImpl implements GoogleSinglePageCrawler {
 	private static final int RESULTS_PER_PAGE = 10;
 
 	@Override
-	public List<GoogleSearchResult> crawl(String searchTerm, int pageNumber) throws IOException {
+	public List<String> crawl(String searchTerm, int pageNumber) throws IOException {
 		final String query = transformToQuery(searchTerm);
 		
 		final String searchURL = 
@@ -47,24 +45,19 @@ public class GoogleSinglePageCrawlerImpl implements GoogleSinglePageCrawler {
 						parsePage(document);
 	}
 
-	private static List<GoogleSearchResult> parsePage(Document document) {
+	private static List<String> parsePage(Document document) {
 		// div element with class "rc" > child div element with class "r"
 		final Elements elements = document.select("div.rc > div.r");
 		
 		return elements
 				.stream()
-				.map(e -> new GoogleSearchResult(parseTitle(e), parseURL(e)))
+				.map(e -> parseURL(e))
 				.collect(Collectors.toList());
 	}
 	
 	private static String parseURL(Element e) {
 		// main URL is the one without a class
 		return e.select("a:not([class])").attr("href");
-	}
-	
-	private static String parseTitle(Element e) {
-		// main title is the one under h3 tag
-		return e.select("h3").text();
 	}
 	
 	private static boolean isEmptyResult(Document doc) {
